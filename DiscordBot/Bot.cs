@@ -2,6 +2,10 @@
 using DSharpPlus;
 using DSharpPlus.CommandsNext;
 using DSharpPlus.EventArgs;
+using DSharpPlus.Interactivity.Extensions;
+using DSharpPlus.Interactivity;
+using DSharpPlus.Net;
+using DSharpPlus.Lavalink;
 
 namespace DiscordBot
 {
@@ -12,6 +16,10 @@ namespace DiscordBot
         private DiscordClient client;
 
         private CommandsNextExtension commands;
+
+        private LavalinkExtension lavalink;
+
+        private LavalinkConfiguration lavalinkConfig;
 
         string _prefix = "!!";
         public string Prefix
@@ -26,6 +34,7 @@ namespace DiscordBot
         private XrhrBot()
         {
             this.SetupClient();
+            this.SetupLavalink();
             this.SetupCommands();
         }
 
@@ -59,6 +68,11 @@ namespace DiscordBot
                 AutoReconnect = true
             };
             this.client = new DiscordClient(cfg);
+            this.client.UseInteractivity(new InteractivityConfiguration()
+            {
+                Timeout = TimeSpan.FromMinutes(2)
+            });
+
             this.client.Ready += ClientReady;
         }
 
@@ -80,11 +94,32 @@ namespace DiscordBot
             this.commands = this.client.UseCommandsNext(cmd_cfg);
 
             this.commands.RegisterCommands<ConfigCommands>();
+            this.commands.RegisterCommands<MusicCommands>();
+        }
+
+        private void SetupLavalink()
+        {
+            var endpoint = new ConnectionEndpoint
+            {
+                Hostname = "v4.lavalink.rocks",
+                Port = 443,
+                Secured = true
+            };
+
+            this.lavalinkConfig = new LavalinkConfiguration
+            {
+                Password = "horizxon.tech",
+                RestEndpoint = endpoint,
+                SocketEndpoint = endpoint
+            };
+
+            this.lavalink = this.client.UseLavalink();
         }
 
         public async Task Run()
         {
             await this.client.ConnectAsync();
+            await this.lavalink.ConnectAsync(this.lavalinkConfig);
 
             await Task.Delay(-1);
         }
