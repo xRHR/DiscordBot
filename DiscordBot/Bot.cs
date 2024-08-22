@@ -82,7 +82,7 @@ namespace DiscordBot
             this.commands.RegisterCommands<ConfigCommands>();
         }
 
-        public async void Run()
+        public async Task Run()
         {
             await this.client.ConnectAsync();
 
