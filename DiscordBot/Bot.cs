@@ -20,8 +20,6 @@ namespace DiscordBot
             set
             {
                 _prefix = value;
-                this.SetupClient();
-                this.SetupCommands();
             }
         }
 
@@ -84,9 +82,10 @@ namespace DiscordBot
             this.commands.RegisterCommands<ConfigCommands>();
         }
 
-        public async Task Run()
+        public async void Run()
         {
             await this.client.ConnectAsync();
+
             await Task.Delay(-1);
         }
 

@@ -11,10 +11,11 @@ namespace DiscordBot.Commands
         {
             try
             {
-                var bot = XrhrBot.Instance();
-                bot.Prefix = prefix;
+                await ctx.Channel.SendMessageAsync("can't do that yet");
+                //var bot = XrhrBot.Instance();
+                //bot.Prefix = prefix;
 
-                await ctx.RespondAsync($"Prefix set to ```{prefix}```");
+                //await ctx.RespondAsync($"Prefix set to ```{prefix}```");
 
             }
             catch (Exception e)
