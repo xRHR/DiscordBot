@@ -15,7 +15,11 @@ namespace DiscordBot.Commands
         [Command("nickname")]
         public async Task Nickname(CommandContext ctx, string nickname)
         {
-            if (ctx.Member is null) return;
+            if (ctx.Member is null)
+            {
+                await ctx.RespondAsync("You must be in a guild to use this command.");
+                return;
+            }
             await ctx.Member.ModifyAsync(x => x.Nickname = nickname);
             await ctx.Channel.SendMessageAsync($"Changed nickname to ```{nickname}```");
         }
