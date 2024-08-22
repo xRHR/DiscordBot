@@ -1,26 +1,39 @@
-﻿using DSharpPlus;
+﻿using DiscordBot.Commands;
+using DSharpPlus;
 using DSharpPlus.CommandsNext;
 using DSharpPlus.EventArgs;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace DiscordBot
 {
-    internal class Bot
+    internal class XrhrBot
     {
         private DiscordClient client;
 
         private CommandsNextExtension commands;
 
         string _prefix = "!!";
-        public string Prefix { get { return _prefix; } }
-        //Environment.GetEnvironmentVariable("TG_TOKEN");
-
-        public Bot()
+        public string Prefix
         {
+            get { return _prefix; }
+            set
+            {
+                _prefix = value;
+                this.SetupCommands();
+            }
+        }
+
+        public XrhrBot()
+        {
+            this.SetupClient();
+            this.SetupCommands();
+        }
+
+        private void SetupClient()
+        {
+            if (Environment.GetEnvironmentVariable("DISCORD_TOKEN") == null)
+            {
+                throw new Exception("Environment variable DISCORD_TOKEN is not set");
+            }
             var cfg = new DiscordConfiguration
             {
                 Intents = DiscordIntents.All,
@@ -30,6 +43,21 @@ namespace DiscordBot
             };
             this.client = new DiscordClient(cfg);
             this.client.Ready += ClientReady;
+        }
+
+        private void SetupCommands()
+        {
+            var cmd_cfg = new CommandsNextConfiguration()
+            {
+                StringPrefixes = [Prefix],
+                EnableDms = true,
+                EnableMentionPrefix = true,
+                EnableDefaultHelp = false
+            };
+
+            this.commands = this.client.UseCommandsNext(cmd_cfg);
+
+            this.commands.RegisterCommands<ConfigCommands>();
         }
 
         public async Task Run()

@@ -1,4 +1,4 @@
 ﻿using DiscordBot;
 
-Bot bot = new();
+XrhrBot bot = new();
 await bot.Run();
