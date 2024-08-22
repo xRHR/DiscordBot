@@ -1,5 +1,6 @@
 ﻿using DSharpPlus.CommandsNext;
 using DSharpPlus.CommandsNext.Attributes;
+using DSharpPlus.Entities;
 
 namespace DiscordBot.Commands
 {
@@ -32,7 +33,9 @@ namespace DiscordBot.Commands
                     await ctx.RespondAsync("You must be in a guild to use this command.");
                     return;
                 }
-                await ctx.Member.ModifyAsync(x => x.Nickname = nickname);
+                Task<DiscordMember> get_self_member = ctx.Guild.GetMemberAsync(ctx.Client.CurrentUser.Id);
+                await get_self_member;
+                await get_self_member.Result.ModifyAsync(x => x.Nickname = nickname);
                 await ctx.Channel.SendMessageAsync($"Changed nickname to ```{nickname}```");
 
             }
