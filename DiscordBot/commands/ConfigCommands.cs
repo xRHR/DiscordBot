@@ -1,30 +1,13 @@
 ﻿using DSharpPlus.CommandsNext;
 using DSharpPlus.CommandsNext.Attributes;
 using DSharpPlus.Entities;
+using DSharpPlus.SlashCommands;
 
 namespace DiscordBot.Commands
 {
     internal class ConfigCommands : BaseCommandModule
     {
-        [Command("prefix")]
-        public async Task Prefix(CommandContext ctx, string prefix)
-        {
-            try
-            {
-                await ctx.Channel.SendMessageAsync("can't do that yet");
-                //var bot = XrhrBot.Instance();
-                //bot.Prefix = prefix;
-
-                //await ctx.RespondAsync($"Prefix set to ```{prefix}```");
-
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e.Message);
-            }
-        }
-
-        [Command("nickname")]
+        [SlashCommand("nickname", description: "Change bot nickname")]
         public async Task Nickname(CommandContext ctx, string nickname)
         {
             try

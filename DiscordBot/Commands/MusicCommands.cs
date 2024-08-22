@@ -1,92 +1,107 @@
-﻿using DSharpPlus.CommandsNext;
-using DSharpPlus.CommandsNext.Attributes;
-using DSharpPlus.Entities;
-using DSharpPlus.Lavalink;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using System;
 using System.Threading.Tasks;
+using DSharpPlus.Entities;
+using DSharpPlus.SlashCommands;
+using Lavalink4NET;
+using Lavalink4NET.Players;
+using Lavalink4NET.Players.Queued;
+using Lavalink4NET.Rest.Entities.Tracks;
+using Microsoft.Extensions.Options;
 
 namespace DiscordBot.Commands
 {
-    internal class MusicCommands : BaseCommandModule
+    public class MusicCommands : ApplicationCommandModule
     {
-        [Command("play")]
-        public async Task Play(CommandContext ctx, string url)
+        private readonly IAudioService _audioService;
+
+        public MusicCommands(IAudioService audioService)
         {
-            if (ctx.Member == null) return;
+            ArgumentNullException.ThrowIfNull(audioService);
 
-            var lavalinkInstance = ctx.Client.GetLavalink();
+            _audioService = audioService;
+        }
 
-            if (!lavalinkInstance.ConnectedNodes.Any())
+        [SlashCommand("play", description: "Plays music")]
+        public async Task Play(InteractionContext interactionContext, [Option("query", "Track to play")] string query)
+        {
+            await interactionContext.DeferAsync().ConfigureAwait(false);
+
+            var player = await GetPlayerAsync(interactionContext, connectToVoiceChannel: true).ConfigureAwait(false);
+
+            if (player is null)
             {
-                var emb = new DiscordEmbedBuilder
-                {
-                    Title = "Че за хуйня",
-                    Description = "Не могу подключиться к серверу Lavalink",
-                    Color = DiscordColor.Red
-                };
-                await ctx.RespondAsync(embed: emb);
                 return;
             }
 
-            var vc = ctx.Member.VoiceState.Channel;
-            if (vc == null || vc.Type != DSharpPlus.ChannelType.Voice)
+            var track = await _audioService.Tracks
+                .LoadTrackAsync(query, TrackSearchMode.YouTube)
+                .ConfigureAwait(false);
+
+            if (track is null)
             {
-                var emb = new DiscordEmbedBuilder
-                {
-                    Title = "Ты глупый?",
-                    Description = "Я куда по-твоему музыку тебе играть должен? В войс-то зайди",
-                    Color = DiscordColor.Red
-                };
-                await ctx.RespondAsync(embed: emb);
+                var errorResponse = new DiscordFollowupMessageBuilder()
+                    .WithContent("😖 No results.")
+                    .AsEphemeral();
+
+                await interactionContext
+                    .FollowUpAsync(errorResponse)
+                    .ConfigureAwait(false);
+
                 return;
             }
 
-            var node = lavalinkInstance.ConnectedNodes.Values.First();
-            await node.ConnectAsync(vc);
+            var position = await player
+                .PlayAsync(track)
+                .ConfigureAwait(false);
 
-            var conn = node.GetGuildConnection(ctx.Member.VoiceState.Guild);
-
-            if (conn == null)
+            if (position is 0)
             {
-                var emb = new DiscordEmbedBuilder
+                await interactionContext
+                    .FollowUpAsync(new DiscordFollowupMessageBuilder().WithContent($"🔈 Playing: {track.Uri}"))
+                    .ConfigureAwait(false);
+            }
+            else
+            {
+                await interactionContext
+                    .FollowUpAsync(new DiscordFollowupMessageBuilder().WithContent($"🔈 Added to queue: {track.Uri}"))
+                    .ConfigureAwait(false);
+            }
+        }
+
+        private async ValueTask<QueuedLavalinkPlayer?> GetPlayerAsync(InteractionContext interactionContext, bool connectToVoiceChannel = true)
+        {
+            ArgumentNullException.ThrowIfNull(interactionContext);
+
+            var retrieveOptions = new PlayerRetrieveOptions(
+                ChannelBehavior: connectToVoiceChannel ? PlayerChannelBehavior.Join : PlayerChannelBehavior.None);
+
+            var playerOptions = new QueuedLavalinkPlayerOptions { HistoryCapacity = 10000 };
+
+            var result = await _audioService.Players
+                .RetrieveAsync(interactionContext.Guild.Id, interactionContext.Member?.VoiceState.Channel.Id, playerFactory: PlayerFactory.Queued, Options.Create(playerOptions), retrieveOptions)
+                .ConfigureAwait(false);
+
+            if (!result.IsSuccess)
+            {
+                var errorMessage = result.Status switch
                 {
-                    Title = "Не получилось подключиться",
-                    Description = "Хз короче Lavalink не хочет подключаться",
-                    Color = DiscordColor.Red
+                    PlayerRetrieveStatus.UserNotInVoiceChannel => "You are not connected to a voice channel.",
+                    PlayerRetrieveStatus.BotNotConnected => "The bot is currently not connected.",
+                    _ => "Unknown error.",
                 };
-                await ctx.RespondAsync(embed: emb);
-                return;
+
+                var errorResponse = new DiscordFollowupMessageBuilder()
+                    .WithContent(errorMessage)
+                    .AsEphemeral();
+
+                await interactionContext
+                    .FollowUpAsync(errorResponse)
+                    .ConfigureAwait(false);
+
+                return null;
             }
 
-            var search_query = await node.Rest.GetTracksAsync(url);
-
-            if (search_query.LoadResultType is LavalinkLoadResultType.LoadFailed or LavalinkLoadResultType.NoMatches)
-            {
-                var emb = new DiscordEmbedBuilder
-                {
-                    Title = "Ниче не нашел",
-                    Description = "Увы",
-                    Color = DiscordColor.Red
-                };
-                await ctx.RespondAsync(embed: emb);
-                return;
-            }
-
-            var music_track = search_query.Tracks.First();
-
-            await conn.PlayAsync(music_track);
-
-            var now_playing_emb = new DiscordEmbedBuilder
-            {
-                Title = "Сейчас играет",
-                Description = music_track.Title + "\n" + music_track.Author + "\n" + music_track.Uri,
-                Color = DiscordColor.Green
-            };
-
-            await ctx.RespondAsync(embed: now_playing_emb);
+            return result.Player;
         }
     }
 }
