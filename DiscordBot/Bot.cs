@@ -20,6 +20,7 @@ namespace DiscordBot
             set
             {
                 _prefix = value;
+                this.SetupClient();
                 this.SetupCommands();
             }
         }
@@ -41,10 +42,17 @@ namespace DiscordBot
 
         private void SetupClient()
         {
-            if (Environment.GetEnvironmentVariable("DISCORD_TOKEN") == null)
+            if (this.client != null)
+            {
+                this.client.DisconnectAsync();
+                this.client.Dispose();
+            }
+
+            if (string.IsNullOrWhiteSpace(Environment.GetEnvironmentVariable("DISCORD_TOKEN")))
             {
                 throw new Exception("Environment variable DISCORD_TOKEN is not set");
             }
+
             var cfg = new DiscordConfiguration
             {
                 Intents = DiscordIntents.All,
@@ -58,6 +66,11 @@ namespace DiscordBot
 
         private void SetupCommands()
         {
+            if (this.commands != null)
+            {
+                this.commands.Dispose();
+            }
+
             var cmd_cfg = new CommandsNextConfiguration()
             {
                 StringPrefixes = [Prefix],
