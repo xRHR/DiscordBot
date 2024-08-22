@@ -7,6 +7,8 @@ namespace DiscordBot
 {
     internal class XrhrBot
     {
+        private static XrhrBot _instance;
+
         private DiscordClient client;
 
         private CommandsNextExtension commands;
@@ -22,10 +24,19 @@ namespace DiscordBot
             }
         }
 
-        public XrhrBot()
+        private XrhrBot()
         {
             this.SetupClient();
             this.SetupCommands();
+        }
+
+        public static XrhrBot Instance()
+        {
+            if (_instance == null)
+            {
+                _instance = new XrhrBot();
+            }
+            return _instance;
         }
 
         private void SetupClient()
