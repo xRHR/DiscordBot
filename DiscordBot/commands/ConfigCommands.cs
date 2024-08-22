@@ -12,10 +12,12 @@ namespace DiscordBot.Commands
             await ctx.RespondAsync($"Prefix set to ```{prefix}```");
         }
 
-        [Command("me")]
-        public async Task Prefix(CommandContext ctx)
+        [Command("nickname")]
+        public async Task Nickname(CommandContext ctx, string nickname)
         {
-            await ctx.Channel.SendMessageAsync(ctx.Client.CurrentUser.Username);
+            if (ctx.Member is null) return;
+            await ctx.Member.ModifyAsync(x => x.Nickname = nickname);
+            await ctx.Channel.SendMessageAsync($"Changed nickname to ```{nickname}```");
         }
     }
 }
