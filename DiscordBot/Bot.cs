@@ -101,14 +101,14 @@ namespace DiscordBot
         {
             var endpoint = new ConnectionEndpoint
             {
-                Hostname = "v4.lavalink.rocks",
+                Hostname = "lavalinkv4-eu.serenetia.com",
                 Port = 443,
                 Secured = true
             };
 
             this.lavalinkConfig = new LavalinkConfiguration
             {
-                Password = "horizxon.tech",
+                Password = "lavalinkv4",
                 RestEndpoint = endpoint,
                 SocketEndpoint = endpoint
             };
