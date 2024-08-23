@@ -364,3 +364,4 @@ FodyWeavers.xsd
 /DiscordBot/Settings.settings
 /DiscordBot/App.config
 /DiscordBot/Settings.Designer.cs
+/DiscordBot/lavalink-host.json
