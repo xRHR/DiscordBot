@@ -1,11 +1,15 @@
 ﻿using Discord.Interactions;
 using Discord.WebSocket;
 using Lavalink4NET.Extensions;
+using Lavalink4NET.InactivityTracking;
+using Lavalink4NET.Players;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Configuration;
 using DiscordBot;
+using Lavalink4NET.InactivityTracking.Trackers.Idle;
+using Lavalink4NET.InactivityTracking.Trackers.Users;
 
 string configFilePath = Path.Combine(AppContext.BaseDirectory, "lavalink-host.json");
 IConfiguration lavalink_cfg = new ConfigurationBuilder()
@@ -47,6 +51,21 @@ builder.Services.ConfigureLavalink(config =>
 {
     config.BaseAddress = new Uri(lavalinkUrl ?? "");
     config.Passphrase = lavalinkPassword ?? "";
+});
+builder.Services.Configure<IdleInactivityTrackerOptions>(config =>
+{
+    config.Timeout = TimeSpan.FromSeconds(10);
+    config.IdleStates = new System.Collections.Immutable.ImmutableArray<PlayerState>
+    {
+        PlayerState.NotPlaying,
+        PlayerState.Paused,
+    };
+});
+builder.Services.Configure<UsersInactivityTrackerOptions>(config =>
+{
+    config.Timeout = TimeSpan.FromSeconds(10);
+    config.ExcludeBots = true;
+    config.Threshold = 1;
 });
 
 IHost host = builder.Build();
