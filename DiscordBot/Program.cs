@@ -7,13 +7,6 @@ using Microsoft.Extensions.Logging;
 using System.Configuration;
 using DiscordBot;
 
-HostApplicationBuilder builder = Host.CreateApplicationBuilder(args);
-
-// Discord
-builder.Services.AddSingleton<DiscordSocketClient>();
-builder.Services.AddSingleton(x => new InteractionService(x.GetRequiredService<DiscordSocketClient>()));
-builder.Services.AddHostedService<DiscordClientHost>();
-
 string? lavalinkUrl = ConfigurationManager.AppSettings["lavalinkHostUrl"];
 
 if (lavalinkUrl is null)
@@ -33,6 +26,13 @@ if (lavalinkPassword is null)
     lavalinkPassword = Console.ReadLine();
     ConfigurationManager.AppSettings.Set("lavalinkHostPassword", lavalinkPassword);
 }
+
+HostApplicationBuilder builder = Host.CreateApplicationBuilder(args);
+
+// Discord
+builder.Services.AddSingleton<DiscordSocketClient>();
+builder.Services.AddSingleton(x => new InteractionService(x.GetRequiredService<DiscordSocketClient>()));
+builder.Services.AddHostedService<DiscordClientHost>();
 
 // Lavalink
 builder.Services.AddLavalink();
