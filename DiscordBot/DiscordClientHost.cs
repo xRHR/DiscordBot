@@ -37,7 +37,7 @@ namespace DiscordBot
 
             // Put bot token here
             await _discordSocketClient
-                .LoginAsync(TokenType.Bot, "")
+                .LoginAsync(TokenType.Bot, Environment.GetEnvironmentVariable("DISCORD_TOKEN"))
                 .ConfigureAwait(false);
 
             await _discordSocketClient
@@ -69,7 +69,7 @@ namespace DiscordBot
 
             // Put your guild id to test here
             await _interactionService
-                .RegisterCommandsToGuildAsync(0)
+                .RegisterCommandsToGuildAsync(287458474206691328)
                 .ConfigureAwait(false);
         }
     }

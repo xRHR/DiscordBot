@@ -6,7 +6,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using DiscordBot;
 
-var builder = new HostApplicationBuilder(args);
+HostApplicationBuilder builder = Host.CreateApplicationBuilder(args);
 
 // Discord
 builder.Services.AddSingleton<DiscordSocketClient>();
@@ -17,4 +17,6 @@ builder.Services.AddHostedService<DiscordClientHost>();
 builder.Services.AddLavalink();
 builder.Services.AddLogging(x => x.AddConsole().SetMinimumLevel(LogLevel.Trace));
 
-builder.Build().Run();
+IHost host = builder.Build();
+    
+host.Run();
