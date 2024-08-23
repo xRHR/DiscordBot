@@ -267,10 +267,5 @@ namespace DiscordBot
 
             return result.Player;
         }
-
-        public async Task InteractiveEmbedPlayer(VoteLavalinkPlayer player)
-        {
-
-        }
     }
 }

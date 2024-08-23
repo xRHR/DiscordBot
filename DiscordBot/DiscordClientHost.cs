@@ -76,7 +76,7 @@ namespace DiscordBot
 
             // Put your guild id to test here
             await _interactionService
-                .RegisterCommandsToGuildAsync(287458474206691328)
+                .RegisterCommandsGloballyAsync()
                 .ConfigureAwait(false);
         }
     }
