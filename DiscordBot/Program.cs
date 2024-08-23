@@ -10,7 +10,7 @@ HostApplicationBuilder builder = Host.CreateApplicationBuilder(args);
 
 // Discord
 builder.Services.AddSingleton<DiscordSocketClient>();
-builder.Services.AddSingleton<InteractionService>();
+builder.Services.AddSingleton(x => new InteractionService(x.GetRequiredService<DiscordSocketClient>()));
 builder.Services.AddHostedService<DiscordClientHost>();
 
 // Lavalink
@@ -18,5 +18,5 @@ builder.Services.AddLavalink();
 builder.Services.AddLogging(x => x.AddConsole().SetMinimumLevel(LogLevel.Trace));
 
 IHost host = builder.Build();
-    
+
 host.Run();

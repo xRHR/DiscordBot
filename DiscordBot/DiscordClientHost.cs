@@ -35,9 +35,16 @@ namespace DiscordBot
             _discordSocketClient.InteractionCreated += InteractionCreated;
             _discordSocketClient.Ready += ClientReady;
 
+            var token = Environment.GetEnvironmentVariable("DISCORD_TOKEN");
+
+            if (string.IsNullOrWhiteSpace(token))
+            {
+                throw new NullReferenceException("Environment variable DISCORD_TOKEN is not set");
+            }
+
             // Put bot token here
             await _discordSocketClient
-                .LoginAsync(TokenType.Bot, Environment.GetEnvironmentVariable("DISCORD_TOKEN"))
+                .LoginAsync(TokenType.Bot, token)
                 .ConfigureAwait(false);
 
             await _discordSocketClient
