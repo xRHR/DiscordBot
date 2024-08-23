@@ -7,8 +7,9 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Configuration;
 using DiscordBot;
 
+string configFilePath = Path.Combine(AppContext.BaseDirectory, "lavalink-host.json");
 IConfiguration lavalink_cfg = new ConfigurationBuilder()
-    .AddJsonFile("lavalink-host.json", optional: false, reloadOnChange: true)
+    .AddJsonFile(configFilePath, optional: false, reloadOnChange: true)
     .Build();
 
 string err = "";
