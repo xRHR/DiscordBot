@@ -4,57 +4,32 @@ using Lavalink4NET.Extensions;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
-using System.Configuration;
+using Microsoft.Extensions.Configuration;
 using DiscordBot;
 
-string warn = "";
-bool err = false;
+IConfiguration lavalink_cfg = new ConfigurationBuilder()
+    .AddJsonFile("lavalink-host.json", optional: false, reloadOnChange: true)
+    .Build();
 
-string? lavalinkUrl = ConfigurationManager.AppSettings["lavalinkHostUrl"];
+string err = "";
+string? lavalinkUrl = lavalink_cfg.GetValue<string>("Url");
 
 if (string.IsNullOrWhiteSpace(lavalinkUrl))
 {
-    warn += "Warning. Configuration does not contain a setting \"lavalinkHostUrl\". Trying to get environment variable LAVALINK_HOST_URL...\n";
-    lavalinkUrl = Environment.GetEnvironmentVariable("LAVALINK_HOST_URL");
-
-    if (string.IsNullOrWhiteSpace(lavalinkUrl))
-    {
-        warn += "Error. Environment variable \"LAVALINK_HOST_URL\" not set.\n";
-        err = true;
-    }
-    else
-    {
-        lavalinkUrl = lavalinkUrl?.Trim();
-        ConfigurationManager.AppSettings["lavalinkHostUrl"] = lavalinkUrl;
-    }
+    err += "Error. Lavalink URL is not set.\n";
 }
 
-string? lavalinkPassword = ConfigurationManager.AppSettings["lavalinkHostPassword"];
+string? lavalinkPassword = lavalink_cfg.GetValue<string>("Password");
 
 if (string.IsNullOrWhiteSpace(lavalinkPassword))
 {
-    warn += "Warning. Configuration does not contain a setting \"lavalinkHostPassword\". Trying to get environment variable LAVALINK_HOST_PASSWORD...\n";
-    lavalinkPassword = Environment.GetEnvironmentVariable("LAVALINK_HOST_PASSWORD");
-
-    if (string.IsNullOrWhiteSpace(lavalinkPassword))
-    {
-        warn += "Error. Environment variable \"LAVALINK_HOST_PASSWORD\" not set.\n";
-        err = true;
-    }
-    else
-    {
-        lavalinkUrl = lavalinkUrl?.Trim();
-        ConfigurationManager.AppSettings["lavalinkHostUrl"] = lavalinkUrl;
-    }
+    err += "Error. Lavalink password is not set.\n";
 }
 
-if (!string.IsNullOrWhiteSpace(warn))
+if (!string.IsNullOrWhiteSpace(err))
 {
-    Console.WriteLine(warn);
-    if (err)
-    {
-        throw new Exception("Lavalink host isn't provided.");
-    }
+    Console.WriteLine(err);
+    throw new Exception("Lavalink host isn't provided.");
 }
 
 HostApplicationBuilder builder = Host.CreateApplicationBuilder(args);
