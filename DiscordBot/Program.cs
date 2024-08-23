@@ -7,24 +7,54 @@ using Microsoft.Extensions.Logging;
 using System.Configuration;
 using DiscordBot;
 
+string warn = "";
+bool err = false;
+
 string? lavalinkUrl = ConfigurationManager.AppSettings["lavalinkHostUrl"];
 
-if (lavalinkUrl is null)
+if (string.IsNullOrWhiteSpace(lavalinkUrl))
 {
-    Console.Write("Enter lavalink host url: ");
-    lavalinkUrl = Console.ReadLine();
-    ConfigurationManager.AppSettings.Set("lavalinkHostUrl", lavalinkUrl);
-}
+    warn += "Warning. Configuration does not contain a setting \"lavalinkHostUrl\". Trying to get environment variable LAVALINK_HOST_URL...\n";
+    lavalinkUrl = Environment.GetEnvironmentVariable("LAVALINK_HOST_URL");
 
-lavalinkUrl = lavalinkUrl?.Trim();
+    if (string.IsNullOrWhiteSpace(lavalinkUrl))
+    {
+        warn += "Error. Environment variable \"LAVALINK_HOST_URL\" not set.\n";
+        err = true;
+    }
+    else
+    {
+        lavalinkUrl = lavalinkUrl?.Trim();
+        ConfigurationManager.AppSettings["lavalinkHostUrl"] = lavalinkUrl;
+    }
+}
 
 string? lavalinkPassword = ConfigurationManager.AppSettings["lavalinkHostPassword"];
 
-if (lavalinkPassword is null)
+if (string.IsNullOrWhiteSpace(lavalinkPassword))
 {
-    Console.Write("Enter lavalink host password: ");
-    lavalinkPassword = Console.ReadLine();
-    ConfigurationManager.AppSettings.Set("lavalinkHostPassword", lavalinkPassword);
+    warn += "Warning. Configuration does not contain a setting \"lavalinkHostPassword\". Trying to get environment variable LAVALINK_HOST_PASSWORD...\n";
+    lavalinkPassword = Environment.GetEnvironmentVariable("LAVALINK_HOST_PASSWORD");
+
+    if (string.IsNullOrWhiteSpace(lavalinkPassword))
+    {
+        warn += "Error. Environment variable \"LAVALINK_HOST_PASSWORD\" not set.\n";
+        err = true;
+    }
+    else
+    {
+        lavalinkUrl = lavalinkUrl?.Trim();
+        ConfigurationManager.AppSettings["lavalinkHostUrl"] = lavalinkUrl;
+    }
+}
+
+if (!string.IsNullOrWhiteSpace(warn))
+{
+    Console.WriteLine(warn);
+    if (err)
+    {
+        throw new Exception("Lavalink host isn't provided.");
+    }
 }
 
 HostApplicationBuilder builder = Host.CreateApplicationBuilder(args);
