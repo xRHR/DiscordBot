@@ -41,6 +41,22 @@ if (!string.IsNullOrWhiteSpace(err))
 
 HostApplicationBuilder builder = Host.CreateApplicationBuilder(args);
 
+// Discord
+builder.Services.AddSingleton<DiscordSocketClient>();
+builder.Services.AddSingleton(x => new InteractionService(x.GetRequiredService<DiscordSocketClient>()));
+builder.Services.AddHostedService<DiscordClientHost>();
+
+// Lavalink
+builder.Services.AddLavalink();
+builder.Services.AddLogging(x => x.AddConsole().SetMinimumLevel(LogLevel.Trace));
+builder.Services.ConfigureLavalink(config =>
+{
+    config.BaseAddress = new Uri(lavalinkUrl ?? "");
+    config.Passphrase = lavalinkPassword ?? "";
+});
+
+builder.Services.AddInactivityTracking();
+
 builder.Services.Configure<IdleInactivityTrackerOptions>(config =>
 {
     config.Timeout = TimeSpan.FromSeconds(10);
@@ -56,22 +72,6 @@ builder.Services.Configure<UsersInactivityTrackerOptions>(config =>
     config.ExcludeBots = true;
     config.Threshold = 1;
 });
-
-// Discord
-builder.Services.AddSingleton<DiscordSocketClient>();
-builder.Services.AddSingleton(x => new InteractionService(x.GetRequiredService<DiscordSocketClient>()));
-builder.Services.AddHostedService<DiscordClientHost>();
-
-// Lavalink
-builder.Services.AddLavalink();
-builder.Services.AddLogging(x => x.AddConsole().SetMinimumLevel(LogLevel.Trace));
-builder.Services.ConfigureLavalink(config =>
-{
-    config.BaseAddress = new Uri(lavalinkUrl ?? "");
-    config.Passphrase = lavalinkPassword ?? "";
-});
-
-
 
 IHost host = builder.Build();
 
