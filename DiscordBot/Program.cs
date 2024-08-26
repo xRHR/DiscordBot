@@ -11,6 +11,7 @@ using DiscordBot;
 using Lavalink4NET.InactivityTracking.Trackers.Idle;
 using Lavalink4NET.InactivityTracking.Trackers.Users;
 using Lavalink4NET.InactivityTracking.Extensions;
+using System.Collections.Immutable;
 
 string configFilePath = Path.Combine(AppContext.BaseDirectory, "lavalink-host.json");
 IConfiguration lavalink_cfg = new ConfigurationBuilder()
@@ -54,16 +55,6 @@ builder.Services.Configure<UsersInactivityTrackerOptions>(config =>
     config.Timeout = TimeSpan.FromSeconds(10);
     config.ExcludeBots = true;
     config.Threshold = 1;
-});
-
-builder.Services.ConfigureInactivityTracking(options =>
-{
-    options.DefaultTimeout = TimeSpan.FromSeconds(10);
-    options.DefaultPollInterval = TimeSpan.FromSeconds(5);
-    options.TrackingMode = InactivityTrackingMode.Any;
-    options.UseDefaultTrackers = true;
-    options.TimeoutBehavior = InactivityTrackingTimeoutBehavior.Lowest;
-    options.InactivityBehavior = PlayerInactivityBehavior.Pause;
 });
 
 // Discord
