@@ -40,16 +40,10 @@ if (!string.IsNullOrWhiteSpace(err))
 
 HostApplicationBuilder builder = Host.CreateApplicationBuilder(args);
 
-// Discord
-builder.Services.AddSingleton<DiscordSocketClient>();
-builder.Services.AddSingleton(x => new InteractionService(x.GetRequiredService<DiscordSocketClient>()));
-builder.Services.AddHostedService<DiscordClientHost>();
-
-
 builder.Services.Configure<IdleInactivityTrackerOptions>(config =>
 {
-config.Timeout = TimeSpan.FromSeconds(10);
-config.IdleStates = new System.Collections.Immutable.ImmutableArray<PlayerState>
+    config.Timeout = TimeSpan.FromSeconds(10);
+    config.IdleStates = new System.Collections.Immutable.ImmutableArray<PlayerState>
     {
         PlayerState.NotPlaying,
         PlayerState.Paused,
@@ -57,9 +51,9 @@ config.IdleStates = new System.Collections.Immutable.ImmutableArray<PlayerState>
 });
 builder.Services.Configure<UsersInactivityTrackerOptions>(config =>
 {
-config.Timeout = TimeSpan.FromSeconds(10);
-config.ExcludeBots = true;
-config.Threshold = 1;
+    config.Timeout = TimeSpan.FromSeconds(10);
+    config.ExcludeBots = true;
+    config.Threshold = 1;
 });
 
 builder.Services.ConfigureInactivityTracking(options =>
@@ -70,14 +64,20 @@ builder.Services.ConfigureInactivityTracking(options =>
     options.UseDefaultTrackers = true;
     options.TimeoutBehavior = InactivityTrackingTimeoutBehavior.Lowest;
     options.InactivityBehavior = PlayerInactivityBehavior.Pause;
-    // Lavalink
-    builder.Services.AddLavalink();
+});
+
+// Discord
+builder.Services.AddSingleton<DiscordSocketClient>();
+builder.Services.AddSingleton(x => new InteractionService(x.GetRequiredService<DiscordSocketClient>()));
+builder.Services.AddHostedService<DiscordClientHost>();
+
+// Lavalink
+builder.Services.AddLavalink();
 builder.Services.AddLogging(x => x.AddConsole().SetMinimumLevel(LogLevel.Trace));
 builder.Services.ConfigureLavalink(config =>
 {
     config.BaseAddress = new Uri(lavalinkUrl ?? "");
     config.Passphrase = lavalinkPassword ?? "";
-});
 });
 
 
