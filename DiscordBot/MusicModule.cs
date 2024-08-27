@@ -251,12 +251,14 @@ namespace DiscordBot
         /// </returns>
         private async ValueTask<VoteLavalinkPlayer?> GetPlayerAsync(bool connectToVoiceChannel = true)
         {
+            Console.WriteLine("GetPlayerAsync started");
             var retrieveOptions = new PlayerRetrieveOptions(
                 ChannelBehavior: connectToVoiceChannel ? PlayerChannelBehavior.Join : PlayerChannelBehavior.None);
 
             var result = await _audioService.Players
                 .RetrieveAsync(Context, playerFactory: PlayerFactory.Vote, retrieveOptions)
                 .ConfigureAwait(false);
+            Console.WriteLine("GetPlayerAsync RetrieveAsync");
 
             if (!result.IsSuccess)
             {
@@ -270,6 +272,7 @@ namespace DiscordBot
                 await FollowupAsync(errorMessage).ConfigureAwait(false);
                 return null;
             }
+            Console.WriteLine("GetPlayerAsync ened");
 
             return result.Player;
         }
