@@ -42,15 +42,15 @@ namespace DiscordBot
         [SlashCommand("съебни", "бот ливнет из голосового канала", runMode: RunMode.Async)]
         public async Task Disconnect()
         {
+            if (!this._audioService.Players.HasPlayer(Context.Guild.Id))
+            {
+                await RespondAsync("ебнутый?").ConfigureAwait(false);
+                return;
+            }
             var player = await GetPlayerAsync().ConfigureAwait(false);
 
             if (player is null)
             {
-                return;
-            }
-            if (player.State == PlayerState.NotPlaying)
-            {
-                await RespondAsync("ебнутый?").ConfigureAwait(false);
                 return;
             }
             await player.DisconnectAsync().ConfigureAwait(false);
