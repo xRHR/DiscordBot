@@ -44,7 +44,7 @@ namespace DiscordBot
         {
             if (!this._audioService.Players.HasPlayer(Context.Guild.Id))
             {
-                await RespondAsync("ебнутый?").ConfigureAwait(false);
+                await RespondAsync(this.RandomFuckOffString()).ConfigureAwait(false);
                 return;
             }
             var player = await GetPlayerAsync().ConfigureAwait(false);
@@ -104,7 +104,7 @@ namespace DiscordBot
         {
             if (!this._audioService.Players.HasPlayer(Context.Guild.Id))
             {
-                await RespondAsync("ебнутый?").ConfigureAwait(false);
+                await RespondAsync(this.RandomFuckOffString()).ConfigureAwait(false);
                 return;
             }
             var player = await GetPlayerAsync(connectToVoiceChannel: false).ConfigureAwait(false);
@@ -132,7 +132,7 @@ namespace DiscordBot
         {
             if (!this._audioService.Players.HasPlayer(Context.Guild.Id))
             {
-                await RespondAsync("ебнутый?").ConfigureAwait(false);
+                await RespondAsync(this.RandomFuckOffString()).ConfigureAwait(false);
                 return;
             }
             var player = await GetPlayerAsync(connectToVoiceChannel: false);
@@ -182,7 +182,7 @@ namespace DiscordBot
         {
             if (!this._audioService.Players.HasPlayer(Context.Guild.Id))
             {
-                await RespondAsync("ебнутый?").ConfigureAwait(false);
+                await RespondAsync(this.RandomFuckOffString()).ConfigureAwait(false);
                 return;
             }
             var player = await GetPlayerAsync(connectToVoiceChannel: false);
@@ -217,7 +217,7 @@ namespace DiscordBot
         {
             if (!this._audioService.Players.HasPlayer(Context.Guild.Id))
             {
-                await RespondAsync("ебнутый?").ConfigureAwait(false);
+                await RespondAsync(this.RandomFuckOffString()).ConfigureAwait(false);
                 return;
             }
             var player = await GetPlayerAsync(connectToVoiceChannel: false);
@@ -242,7 +242,7 @@ namespace DiscordBot
         {
             if (!this._audioService.Players.HasPlayer(Context.Guild.Id))
             {
-                await RespondAsync("ебнутый?").ConfigureAwait(false);
+                await RespondAsync(this.RandomFuckOffString()).ConfigureAwait(false);
                 return;
             }
             var player = await GetPlayerAsync(connectToVoiceChannel: false);
@@ -296,6 +296,22 @@ namespace DiscordBot
             }
 
             return result.Player;
+        }
+
+        private List<string> fuckOffStrings = new List<string>
+        {
+            "ебнутый?",
+            "ща подожди, через 15 минут",
+            "ай донт ноу",
+            "отъебись",
+            "ежжи бля",
+            "че нахуй",
+            "э бля ты на кого балоны катишь",
+        };
+        private string RandomFuckOffString()
+        {
+            Random r = new Random();
+            return fuckOffStrings[r.Next(this.fuckOffStrings.Count - 1)];
         }
     }
 }
