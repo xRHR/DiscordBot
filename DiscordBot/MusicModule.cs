@@ -61,9 +61,12 @@ namespace DiscordBot
         [SlashCommand("вруби", description: "добавляет трек в очередь", runMode: RunMode.Async)]
         public async Task Play(string query)
         {
+            Console.WriteLine("play started");
             await DeferAsync().ConfigureAwait(false);
+            Console.WriteLine("DeferAsync");
 
             var player = await GetPlayerAsync(connectToVoiceChannel: true).ConfigureAwait(false);
+            Console.WriteLine("GetPlayerAsync");
 
             if (player is null)
             {
@@ -73,6 +76,7 @@ namespace DiscordBot
             var track = await _audioService.Tracks
                 .LoadTrackAsync(query, TrackSearchMode.YouTube)
                 .ConfigureAwait(false);
+            Console.WriteLine("LoadTrackAsync");
 
             if (track is null)
             {
@@ -81,6 +85,7 @@ namespace DiscordBot
             }
 
             var position = await player.PlayAsync(track).ConfigureAwait(false);
+            Console.WriteLine("PlayAsync");
 
             if (position is 0)
             {
@@ -90,6 +95,7 @@ namespace DiscordBot
             {
                 await FollowupAsync($"добавил в очередь: {track.Uri}").ConfigureAwait(false);
             }
+            Console.WriteLine("play ended");
         }
 
         /// <summary>
