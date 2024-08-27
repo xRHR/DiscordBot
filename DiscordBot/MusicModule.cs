@@ -102,6 +102,11 @@ namespace DiscordBot
         [SlashCommand("позиция", description: "показывает текующую позицию в треке", runMode: RunMode.Async)]
         public async Task Position()
         {
+            if (!this._audioService.Players.HasPlayer(Context.Guild.Id))
+            {
+                await RespondAsync("ебнутый?").ConfigureAwait(false);
+                return;
+            }
             var player = await GetPlayerAsync(connectToVoiceChannel: false).ConfigureAwait(false);
 
             if (player is null)
@@ -109,11 +114,6 @@ namespace DiscordBot
                 return;
             }
 
-            if (player.State == PlayerState.Destroyed)
-            {
-                await RespondAsync("ебнутый?").ConfigureAwait(false);
-                return;
-            }
             if (player.CurrentItem is null)
             {
                 await RespondAsync("ничего не играет").ConfigureAwait(false);
@@ -130,6 +130,11 @@ namespace DiscordBot
         [SlashCommand("стоп", description: "останавливает текущий трек", runMode: RunMode.Async)]
         public async Task Stop()
         {
+            if (!this._audioService.Players.HasPlayer(Context.Guild.Id))
+            {
+                await RespondAsync("ебнутый?").ConfigureAwait(false);
+                return;
+            }
             var player = await GetPlayerAsync(connectToVoiceChannel: false);
 
             if (player is null)
@@ -137,11 +142,6 @@ namespace DiscordBot
                 return;
             }
 
-            if (player.State == PlayerState.Destroyed)
-            {
-                await RespondAsync("ебнутый?").ConfigureAwait(false);
-                return;
-            }
             if (player.CurrentItem is null)
             {
                 await RespondAsync("ничего не играет").ConfigureAwait(false);
@@ -180,6 +180,11 @@ namespace DiscordBot
         [SlashCommand("скип", description: "скипает хуйню", runMode: RunMode.Async)]
         public async Task Skip()
         {
+            if (!this._audioService.Players.HasPlayer(Context.Guild.Id))
+            {
+                await RespondAsync("ебнутый?").ConfigureAwait(false);
+                return;
+            }
             var player = await GetPlayerAsync(connectToVoiceChannel: false);
 
             if (player is null)
@@ -187,11 +192,6 @@ namespace DiscordBot
                 return;
             }
 
-            if (player.State == PlayerState.Destroyed)
-            {
-                await RespondAsync("ебнутый?").ConfigureAwait(false);
-                return;
-            }
             if (player.CurrentItem is null)
             {
                 await RespondAsync("ничего не играет").ConfigureAwait(false);
@@ -215,6 +215,11 @@ namespace DiscordBot
         [SlashCommand("пауза", description: "", runMode: RunMode.Async)]
         public async Task PauseAsync()
         {
+            if (!this._audioService.Players.HasPlayer(Context.Guild.Id))
+            {
+                await RespondAsync("ебнутый?").ConfigureAwait(false);
+                return;
+            }
             var player = await GetPlayerAsync(connectToVoiceChannel: false);
 
             if (player is null)
@@ -228,11 +233,6 @@ namespace DiscordBot
                 return;
             }
 
-            if (player.State == PlayerState.Destroyed)
-            {
-                await RespondAsync("ебнутый?").ConfigureAwait(false);
-                return;
-            }
             await player.PauseAsync().ConfigureAwait(false);
             await RespondAsync("поставил паузу").ConfigureAwait(false);
         }
@@ -240,6 +240,11 @@ namespace DiscordBot
         [SlashCommand("рестарт", description: "снимает паузу", runMode: RunMode.Async)]
         public async Task ResumeAsync()
         {
+            if (!this._audioService.Players.HasPlayer(Context.Guild.Id))
+            {
+                await RespondAsync("ебнутый?").ConfigureAwait(false);
+                return;
+            }
             var player = await GetPlayerAsync(connectToVoiceChannel: false);
 
             if (player is null)
@@ -253,11 +258,6 @@ namespace DiscordBot
                 return;
             }
 
-            if (player.State == PlayerState.Destroyed)
-            {
-                await RespondAsync("ебнутый?").ConfigureAwait(false);
-                return;
-            }
             await player.ResumeAsync().ConfigureAwait(false);
             await RespondAsync("играю дальше").ConfigureAwait(false);
         }
