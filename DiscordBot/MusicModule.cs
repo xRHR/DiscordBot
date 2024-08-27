@@ -301,7 +301,7 @@ namespace DiscordBot
         private List<string> fuckOffStrings = new List<string>
         {
             "ебнутый?",
-            "ща подожди, через 15 минут",
+            "ща подожди 15 минут",
             "ай донт ноу",
             "отъебись",
             "ежжи бля",
