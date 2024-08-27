@@ -48,7 +48,7 @@ namespace DiscordBot
             {
                 return;
             }
-            if (player.State == PlayerState.Destroyed)
+            if (player.State == PlayerState.NotPlaying)
             {
                 await RespondAsync("ебнутый?").ConfigureAwait(false);
                 return;
