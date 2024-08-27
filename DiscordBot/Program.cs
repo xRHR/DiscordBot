@@ -60,17 +60,10 @@ builder.Services.AddInactivityTracking();
 builder.Services.Configure<IdleInactivityTrackerOptions>(config =>
 {
     config.Timeout = TimeSpan.FromSeconds(10);
-    config.IdleStates = new System.Collections.Immutable.ImmutableArray<PlayerState>
-    {
-        PlayerState.NotPlaying,
-        PlayerState.Paused,
-    };
 });
 builder.Services.Configure<UsersInactivityTrackerOptions>(config =>
 {
     config.Timeout = TimeSpan.FromSeconds(10);
-    config.ExcludeBots = true;
-    config.Threshold = 1;
 });
 
 IHost host = builder.Build();

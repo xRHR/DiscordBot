@@ -12,7 +12,7 @@ using Lavalink4NET.Rest.Entities.Tracks;
 
 namespace DiscordBot
 {
-
+    
     /// <summary>
     ///     Presents some of the main features of the Lavalink4NET-Library.
     /// </summary>
@@ -39,7 +39,7 @@ namespace DiscordBot
         ///     Disconnects from the current voice channel connected to asynchronously.
         /// </summary>
         /// <returns>a task that represents the asynchronous operation</returns>
-        [SlashCommand("disconnect", "Disconnects from the current voice channel connected to", runMode: RunMode.Async)]
+        [SlashCommand("съебни", "Бот ливнет из голосового канала", runMode: RunMode.Async)]
         public async Task Disconnect()
         {
             var player = await GetPlayerAsync().ConfigureAwait(false);
@@ -50,7 +50,7 @@ namespace DiscordBot
             }
 
             await player.DisconnectAsync().ConfigureAwait(false);
-            await RespondAsync("Disconnected.").ConfigureAwait(false);
+            await RespondAsync("Съебнул.").ConfigureAwait(false);
         }
 
         /// <summary>
@@ -58,7 +58,7 @@ namespace DiscordBot
         /// </summary>
         /// <param name="query">the search query</param>
         /// <returns>a task that represents the asynchronous operation</returns>
-        [SlashCommand("play", description: "Plays music", runMode: RunMode.Async)]
+        [SlashCommand("вруби", description: "Добавляет трек в очередь", runMode: RunMode.Async)]
         public async Task Play(string query)
         {
             await DeferAsync().ConfigureAwait(false);
@@ -76,7 +76,7 @@ namespace DiscordBot
 
             if (track is null)
             {
-                await FollowupAsync("😖 No results.").ConfigureAwait(false);
+                await FollowupAsync("😖 Не нашел трек.").ConfigureAwait(false);
                 return;
             }
 
@@ -84,11 +84,11 @@ namespace DiscordBot
 
             if (position is 0)
             {
-                await FollowupAsync($"🔈 Playing: {track.Uri}").ConfigureAwait(false);
+                await FollowupAsync($"🔈 Врубаю: {track.Uri}").ConfigureAwait(false);
             }
             else
             {
-                await FollowupAsync($"🔈 Added to queue: {track.Uri}").ConfigureAwait(false);
+                await FollowupAsync($"🔈 Добавил в очередь: {track.Uri}").ConfigureAwait(false);
             }
         }
 
@@ -96,7 +96,7 @@ namespace DiscordBot
         ///     Shows the track position asynchronously.
         /// </summary>
         /// <returns>a task that represents the asynchronous operation</returns>
-        [SlashCommand("position", description: "Shows the track position", runMode: RunMode.Async)]
+        [SlashCommand("позиция", description: "Показывает текующую позицию в треке", runMode: RunMode.Async)]
         public async Task Position()
         {
             var player = await GetPlayerAsync(connectToVoiceChannel: false).ConfigureAwait(false);
@@ -108,18 +108,18 @@ namespace DiscordBot
 
             if (player.CurrentItem is null)
             {
-                await RespondAsync("Nothing playing!").ConfigureAwait(false);
+                await RespondAsync("Ничего не играет.").ConfigureAwait(false);
                 return;
             }
 
-            await RespondAsync($"Position: {player.Position?.Position} / {player.CurrentTrack.Duration}.").ConfigureAwait(false);
+            await RespondAsync($"Позиция: {player.Position?.Position} / {player.CurrentTrack.Duration}.").ConfigureAwait(false);
         }
 
         /// <summary>
         ///     Stops the current track asynchronously.
         /// </summary>
         /// <returns>a task that represents the asynchronous operation</returns>
-        [SlashCommand("stop", description: "Stops the current track", runMode: RunMode.Async)]
+        [SlashCommand("стоп", description: "Останавливает текущий трек", runMode: RunMode.Async)]
         public async Task Stop()
         {
             var player = await GetPlayerAsync(connectToVoiceChannel: false);
@@ -131,12 +131,12 @@ namespace DiscordBot
 
             if (player.CurrentItem is null)
             {
-                await RespondAsync("Nothing playing!").ConfigureAwait(false);
+                await RespondAsync("Ничего не играет.").ConfigureAwait(false);
                 return;
             }
 
             await player.StopAsync().ConfigureAwait(false);
-            await RespondAsync("Stopped playing.").ConfigureAwait(false);
+            await RespondAsync("Остановил шарманку.").ConfigureAwait(false);
         }
 
         /// <summary>
@@ -144,12 +144,12 @@ namespace DiscordBot
         /// </summary>
         /// <param name="volume">the volume (1 - 1000)</param>
         /// <returns>a task that represents the asynchronous operation</returns>
-        [SlashCommand("volume", description: "Sets the player volume (0 - 1000%)", runMode: RunMode.Async)]
+        [SlashCommand("громкость", description: "Устанавливает громкость (0 - 1000%)", runMode: RunMode.Async)]
         public async Task Volume(int volume = 100)
         {
             if (volume is > 1000 or < 0)
             {
-                await RespondAsync("Volume out of range: 0% - 1000%!").ConfigureAwait(false);
+                await RespondAsync("Громксть должна быть в диапазоне: 0% - 1000%!").ConfigureAwait(false);
                 return;
             }
 
@@ -161,10 +161,10 @@ namespace DiscordBot
             }
 
             await player.SetVolumeAsync(volume / 100f).ConfigureAwait(false);
-            await RespondAsync($"Volume updated: {volume}%").ConfigureAwait(false);
+            await RespondAsync($"Громкость установлена: {volume}%").ConfigureAwait(false);
         }
 
-        [SlashCommand("skip", description: "Skips the current track", runMode: RunMode.Async)]
+        [SlashCommand("скип", description: "Скипает хуйню", runMode: RunMode.Async)]
         public async Task Skip()
         {
             var player = await GetPlayerAsync(connectToVoiceChannel: false);
@@ -176,7 +176,7 @@ namespace DiscordBot
 
             if (player.CurrentItem is null)
             {
-                await RespondAsync("Nothing playing!").ConfigureAwait(false);
+                await RespondAsync("Ничего не играет.").ConfigureAwait(false);
                 return;
             }
 
@@ -186,15 +186,15 @@ namespace DiscordBot
 
             if (track is not null)
             {
-                await RespondAsync($"Skipped. Now playing: {track.Track!.Uri}").ConfigureAwait(false);
+                await RespondAsync($"Скипнул. Сейчас играет: {track.Track!.Uri}").ConfigureAwait(false);
             }
             else
             {
-                await RespondAsync("Skipped. Stopped playing because the queue is now empty.").ConfigureAwait(false);
+                await RespondAsync("Скипнул. Играть нечего.").ConfigureAwait(false);
             }
         }
 
-        [SlashCommand("pause", description: "Pauses the player.", runMode: RunMode.Async)]
+        [SlashCommand("пауза", description: "угадай.", runMode: RunMode.Async)]
         public async Task PauseAsync()
         {
             var player = await GetPlayerAsync(connectToVoiceChannel: false);
@@ -206,15 +206,15 @@ namespace DiscordBot
 
             if (player.State is PlayerState.Paused)
             {
-                await RespondAsync("Player is already paused.").ConfigureAwait(false);
+                await RespondAsync("Уже на паузе.").ConfigureAwait(false);
                 return;
             }
 
             await player.PauseAsync().ConfigureAwait(false);
-            await RespondAsync("Paused.").ConfigureAwait(false);
+            await RespondAsync("Поставил паузу").ConfigureAwait(false);
         }
 
-        [SlashCommand("resume", description: "Resumes the player.", runMode: RunMode.Async)]
+        [SlashCommand("рестарт", description: "Снимает паузу.", runMode: RunMode.Async)]
         public async Task ResumeAsync()
         {
             var player = await GetPlayerAsync(connectToVoiceChannel: false);
@@ -226,12 +226,12 @@ namespace DiscordBot
 
             if (player.State is not PlayerState.Paused)
             {
-                await RespondAsync("Player is not paused.").ConfigureAwait(false);
+                await RespondAsync("Итак не на паузе.").ConfigureAwait(false);
                 return;
             }
 
             await player.ResumeAsync().ConfigureAwait(false);
-            await RespondAsync("Resumed.").ConfigureAwait(false);
+            await RespondAsync("Играю дальше.").ConfigureAwait(false);
         }
 
         /// <summary>
@@ -256,9 +256,9 @@ namespace DiscordBot
             {
                 var errorMessage = result.Status switch
                 {
-                    PlayerRetrieveStatus.UserNotInVoiceChannel => "You are not connected to a voice channel.",
-                    PlayerRetrieveStatus.BotNotConnected => "The bot is currently not connected.",
-                    _ => "Unknown error.",
+                    PlayerRetrieveStatus.UserNotInVoiceChannel => "В войс зайди.",
+                    PlayerRetrieveStatus.BotNotConnected => "Бот не соединен или чето такое я хуй его.",
+                    _ => "Неизвестная ошибка.",
                 };
 
                 await FollowupAsync(errorMessage).ConfigureAwait(false);
