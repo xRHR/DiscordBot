@@ -48,7 +48,11 @@ namespace DiscordBot
             {
                 return;
             }
-
+            if (player.State == PlayerState.Destroyed)
+            {
+                await RespondAsync("ебнутый?").ConfigureAwait(false);
+                return;
+            }
             await player.DisconnectAsync().ConfigureAwait(false);
             await RespondAsync("наберешь").ConfigureAwait(false);
         }
@@ -61,12 +65,9 @@ namespace DiscordBot
         [SlashCommand("вруби", description: "добавляет трек в очередь", runMode: RunMode.Async)]
         public async Task Play(string query)
         {
-            Console.WriteLine("play started");
             await DeferAsync().ConfigureAwait(false);
-            Console.WriteLine("DeferAsync");
 
             var player = await GetPlayerAsync(connectToVoiceChannel: true).ConfigureAwait(false);
-            Console.WriteLine("GetPlayerAsync");
 
             if (player is null)
             {
@@ -76,8 +77,6 @@ namespace DiscordBot
             var track = await _audioService.Tracks
                 .LoadTrackAsync(query, TrackSearchMode.YouTube)
                 .ConfigureAwait(false);
-            Console.WriteLine("LoadTrackAsync");
-
             if (track is null)
             {
                 await FollowupAsync("такой песни нет").ConfigureAwait(false);
@@ -85,7 +84,6 @@ namespace DiscordBot
             }
 
             var position = await player.PlayAsync(track).ConfigureAwait(false);
-            Console.WriteLine("PlayAsync");
 
             if (position is 0)
             {
@@ -95,7 +93,6 @@ namespace DiscordBot
             {
                 await FollowupAsync($"добавил в очередь: {track.Uri}").ConfigureAwait(false);
             }
-            Console.WriteLine("play ended");
         }
 
         /// <summary>
@@ -112,6 +109,11 @@ namespace DiscordBot
                 return;
             }
 
+            if (player.State == PlayerState.Destroyed)
+            {
+                await RespondAsync("ебнутый?").ConfigureAwait(false);
+                return;
+            }
             if (player.CurrentItem is null)
             {
                 await RespondAsync("ничего не играет").ConfigureAwait(false);
@@ -135,6 +137,11 @@ namespace DiscordBot
                 return;
             }
 
+            if (player.State == PlayerState.Destroyed)
+            {
+                await RespondAsync("ебнутый?").ConfigureAwait(false);
+                return;
+            }
             if (player.CurrentItem is null)
             {
                 await RespondAsync("ничего не играет").ConfigureAwait(false);
@@ -180,6 +187,11 @@ namespace DiscordBot
                 return;
             }
 
+            if (player.State == PlayerState.Destroyed)
+            {
+                await RespondAsync("ебнутый?").ConfigureAwait(false);
+                return;
+            }
             if (player.CurrentItem is null)
             {
                 await RespondAsync("ничего не играет").ConfigureAwait(false);
@@ -216,6 +228,11 @@ namespace DiscordBot
                 return;
             }
 
+            if (player.State == PlayerState.Destroyed)
+            {
+                await RespondAsync("ебнутый?").ConfigureAwait(false);
+                return;
+            }
             await player.PauseAsync().ConfigureAwait(false);
             await RespondAsync("поставил паузу").ConfigureAwait(false);
         }
@@ -236,6 +253,11 @@ namespace DiscordBot
                 return;
             }
 
+            if (player.State == PlayerState.Destroyed)
+            {
+                await RespondAsync("ебнутый?").ConfigureAwait(false);
+                return;
+            }
             await player.ResumeAsync().ConfigureAwait(false);
             await RespondAsync("играю дальше").ConfigureAwait(false);
         }
@@ -272,7 +294,6 @@ namespace DiscordBot
                 await FollowupAsync(errorMessage).ConfigureAwait(false);
                 return null;
             }
-            Console.WriteLine("GetPlayerAsync ened");
 
             return result.Player;
         }
